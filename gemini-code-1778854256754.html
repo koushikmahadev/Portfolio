@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koushik M — Software Engineer & AI Builder</title>
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Devicons -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: rgba(24, 24, 27, 0.4);
+      --surface-hover: rgba(39, 39, 42, 0.6);
+      --card: rgba(20, 20, 25, 0.65);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(255, 255, 255, 0.15);
+      --border-hover: rgba(234, 179, 8, 0.5);
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --accent: #eab308; 
+      --accent-glow: rgba(234, 179, 8, 0.2);
+      --code-font: 'Fira Code', monospace;
+      --body-font: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--body-font);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Glossy Grid Background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+      border-radius: 50%;
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(100px);
+    }
+
+    /* Glass Effect Class */
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .glass-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Floating Pokémon Animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .poke-sprite {
+      image-rendering: pixelated;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    /* Specific Glows for Pokémon */
+    .glow-fire { filter: drop-shadow(0 0 12px rgba(255, 85, 0, 0.6)); }
+    .glow-electric { filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6)); }
+    .glow-dragon { filter: drop-shadow(0 0 12px rgba(255, 165, 0, 0.5)); }
+    .glow-psychic { filter: drop-shadow(0 0 12px rgba(186, 85, 211, 0.6)); }
+    .glow-blue { filter: drop-shadow(0 0 12px rgba(0, 191, 255, 0.6)); }
+    .glow-dark { filter: drop-shadow(0 0 12px rgba(147, 112, 219, 0.5)); }
+    .glow-grass { filter: drop-shadow(0 0 12px rgba(50, 205, 50, 0.5)); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .hero-pokemon-row {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .hero-pokemon-row img:nth-child(2) { animation-delay: 0.5s; height: 90px; }
+    .hero-pokemon-row img:nth-child(3) { animation-delay: 1s; }
+
+    .code-window {
+      background: rgba(10, 10, 12, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: left;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+      min-width: 320px;
+    }
+    .window-controls { display: flex; gap: 8px; margin-bottom: 1rem; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot.red { background: #ff5f56; box-shadow: 0 0 10px #ff5f56; }
+    .dot.yellow { background: #ffbd2e; box-shadow: 0 0 10px #ffbd2e; }
+    .dot.green { background: #27c93f; box-shadow: 0 0 10px #27c93f; }
+
+    .code-block { font-family: var(--code-font); font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .code-block .keyword { color: #c678dd; } 
+    .code-block .variable { color: #eab308; text-shadow: 0 0 8px rgba(234,179,8,0.4); } 
+    .code-block .string { color: #98c379; }
+
+    h1.name {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+      background: linear-gradient(to right, #fff, #eab308);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(234,179,8,0.3);
+    }
+
+    .tagline {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .links-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1s forwards;
+      margin-bottom: 2rem;
+    }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 100px;
+      border: 1px solid var(--border-light);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .link-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 20px rgba(234,179,8,0.2), inset 0 0 10px rgba(234,179,8,0.1);
+      transform: translateY(-2px);
+    }
+
+    /* ===== SECTIONS ===== */
+    section {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-label {
+      font-family: var(--code-font);
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .section-label::before { content: ''; width: 40px; height: 1px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+
+    .section-header-poke {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    h2.section-title { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; margin: 0; }
+
+    /* ===== ABOUT ===== */
+    .about-text { font-size: 18px; line-height: 1.8; color: var(--muted); }
+    .about-text strong { color: var(--text); font-weight: 500; }
+    .about-text a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--accent); transition: color 0.2s; }
+    .about-text a:hover { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+
+    /* ===== SKILLS ===== */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem;
+    }
+    .skill-card { padding: 1.25rem; display: flex; align-items: center; gap: 12px; }
+    .skill-icon { font-size: 28px; color: var(--text); width: 32px; text-align: center; }
+    .skill-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .skill-type { font-size: 12px; color: var(--muted); }
+
+    /* ===== PROJECTS ===== */
+    .projects-grid { display: flex; flex-direction: column; gap: 2rem; }
+    .project-card { padding: 2rem; }
+    .project-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .project-title-group { display: flex; align-items: center; gap: 16px; }
+    .project-title-group h3 { font-size: 22px; font-weight: 600; }
+    
+    .project-desc { font-size: 16px; color: var(--muted); margin-bottom: 1.5rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      font-size: 12px; font-family: var(--code-font); padding: 6px 14px;
+      border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text);
+      border: 1px solid var(--border-light); transition: all 0.2s;
+    }
+    .tag:hover { background: rgba(234, 179, 8, 0.1); border-color: var(--accent); color: var(--accent); }
+
+    /* ===== AWARDS ===== */
+    .awards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .award-card { padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+    .award-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .award-meta { font-size: 13px; color: var(--muted); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+      background: linear-gradient(0deg, rgba(234, 179, 8, 0.02) 0%, transparent 100%);
+    }
+
+    .footer-pokemon-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .footer-pokemon-row img:nth-child(2) { animation-delay: 0.5s; }
+    .footer-pokemon-row img:nth-child(3) { animation-delay: 1s; }
+    .footer-pokemon-row img:nth-child(4) { animation-delay: 1.5s; }
+
+    .footer-bottom { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    .footer-text { font-family: var(--code-font); font-size: 12px; color: var(--muted); }
+    .footer-text span { color: var(--accent); text-shadow: 0 0 5px var(--accent); }
+    
+    /* Scroll Reveal */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.visible { opacity: 1; transform: none; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Badge */
+    .badge-gold {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 14px;
+      border-radius: 100px; border: 1px solid rgba(234, 179, 8, 0.4);
+      color: var(--accent); background: rgba(234, 179, 8, 0.1); font-weight: 600;
+      box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow"></div>
+
+  <!-- ===== HERO ===== -->
+  <main class="hero">
+    
+    <div class="hero-pokemon-row">
+      <!-- Charizard, Dragonite, Raikou from your original request -->
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif" height="75" class="poke-sprite glow-fire" alt="Charizard">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif" class="poke-sprite glow-dragon" alt="Dragonite">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/243.gif" height="75" class="poke-sprite glow-electric" alt="Raikou">
+    </div>
+
+    <div class="code-window">
+      <div class="window-controls">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="code-block">
+        <span class="keyword">const</span> <span class="variable">developer</span> = {<br>
+        &nbsp;&nbsp;name: <span class="string">"Koushik M"</span>,<br>
+        &nbsp;&nbsp;role: <span class="string">"Software Engineer"</span>,<br>
+        &nbsp;&nbsp;focus: [<span class="string">"AI Systems"</span>, <span class="string">"Dev Tooling"</span>],<br>
+        &nbsp;&nbsp;status: <span class="string">"Building & Shipping"</span><br>
+        };
+      </div>
+    </div>
+
+    <h1 class="name">Koushik M</h1>
+    <p class="tagline">
+      19 <span>•</span> Building AI Systems <span>•</span> UVCE Bangalore
+    </p>
+
+    <div class="links-row">
+      <a href="https://github.com/koushikmahadev" class="link-btn" target="_blank">
+        <i data-lucide="github" width="18" height="18"></i> GitHub
+      </a>
+      <a href="https://linkedin.com/in/koushikmahadev" class="link-btn" target="_blank">
+        <i data-lucide="linkedin" width="18" height="18"></i> LinkedIn
+      </a>
+      <a href="mailto:koushikmahadev3@gmail.com" class="link-btn">
+        <i data-lucide="mail" width="18" height="18"></i> Email
+      </a>
+    </div>
+  </main>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="reveal">
+    <div class="section-label">01. About</div>
+    <div class="section-header-poke">
+      <h2 class="section-title">Who am I?</h2>
+    </div>
+    <div class="glass-card" style="padding: 2rem;">
+      <p class="about-text">
+        I'm a first-year ISE student at <strong>UVCE, Bangalore</strong>, shipping production-grade AI systems from day one. 
+        I build at the intersection of healthcare automation and developer tooling — from an end-to-end cardiac triage platform using Azure AI and Power Platform, to containerized productivity tools.
+        <br><br>
+        I've also contributed to real security workflows by integrating the Model Context Protocol (MCP) into the OWASP Bug Logging Tool ecosystem. Not a 10x developer yet — but getting there, one shipped project at a time.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS ===== -->
+  <section class="reveal">
+    <div class="section-label">02. Arsenal</div>
+    <div class="section-header-poke">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/196.gif" height="55" class="poke-sprite glow-psychic" alt="Espeon">
+      <h2 class="section-title">Languages & Tools</h2>
+    </div>
+
+    <div class="skills-grid">
+      <!-- Languages -->
+      <div class="glass-card skill-card">
+        <i class="devicon-c-plain skill-icon"></i>
+        <div><div class="skill-name">C / C++</div><div class="skill-type">System & Logic</div></div>
+      </div>
+      <div class="glass-card skill-card">
+        <i class="devicon-java-plain skill-icon"></i>
+        <div><div class="skill-name">Java</div><div class="skill-type">Backend</div></div>
+      </div>
+      <div class="glass-card skill-card">
+        <i class="devicon-typescript-plain skill-icon"></i>
+        <div><div class="skill-name">TypeScript</div><div class="skill-type">Language</div></div>
+      </div>
+      <div class="glass-card skill-card">
+        <i class="devicon-python-plain skill-icon"></i>
+        <div><div class="skill-name">Python</div><div class="skill-type">Language / AI</div></div>
+      </div>
+      <div class="glass-card skill-card">
+        <i class="devicon-docker-plain skill-icon"></i>
+        <div><div class="skill-name">Docker</div><div class="skill-type">Containerization</div></div>
+      </div>
+      <div class="glass-card skill-card">
+        <i class="devicon-nodejs-plain skill-icon"></i>
+        <div><div class="skill-name">Node.js</div><div class="skill-type">Runtime</div></div>
+      </div>
+      
+      <!-- AI / Tools -->
+      <div class="glass-card skill-card">
+        <i data-lucide="cloud" class="skill-icon"></i>
+        <div><div class="skill-name">Azure AI</div><div class="skill-type">Cloud Intelligence</div></div>
+      </div>
+      <div class="glass-card skill-card">
+        <i data-lucide="bot" class="skill-icon"></i>
+        <div><div class="skill-name">Copilot Studio</div><div class="skill-type">AI Agents</div></div>
+      </div>
+      <div class="glass-card skill-card">
+        <i data-lucide="network" class="skill-icon"></i>
+        <div><div class="skill-name">MCP Protocol</div><div class="skill-type">Model Context</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section class="reveal">
+    <div class="section-label">03. Work</div>
+    <h2 class="section-title" style="margin-bottom: 2rem;">Featured Projects</h2>
+
+    <div class="projects-grid">
+      <!-- Project 1 -->
+      <div class="glass-card project-card">
+        <div class="project-header">
+          <div class="project-title-group">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/644.gif" height="60" class="poke-sprite glow-blue" alt="Zekrom">
+            <h3>Cardio-Triage AI</h3>
+          </div>
+          <span class="badge-gold">Featured</span>
+        </div>
+        <p class="project-desc">
+          An end-to-end triage system designed to reduce life-critical delays in cardiac care. Automates the full journey from patient intake and lab report analysis to urgent specialist scheduling using AI Builder.
+        </p>
+        <div class="project-tags">
+          <span class="tag">Power Platform</span>
+          <span class="tag">Copilot Studio</span>
+          <span class="tag">Power Automate</span>
+          <span class="tag">Azure AI</span>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="glass-card project-card">
+        <div class="project-header">
+          <div class="project-title-group">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/448.gif" height="55" class="poke-sprite glow-blue" alt="Lucario">
+            <h3>FocusFlow</h3>
+          </div>
+        </div>
+        <p class="project-desc">
+          An intelligent productivity platform that safeguards deep work by managing digital interruptions and orchestrating tasks. Architected for portability with Docker for seamless environment consistency.
+        </p>
+        <div class="project-tags">
+          <span class="tag">TypeScript</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">PowerShell</span>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="glass-card project-card">
+        <div class="project-header">
+          <div class="project-title-group">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/472.gif" height="55" class="poke-sprite glow-dark" alt="Gliscor">
+            <h3>BLT-MCP Integration</h3>
+          </div>
+        </div>
+        <p class="project-desc">
+          Integrated Model Context Protocol (MCP) to bridge AI agents with the OWASP Bug Logging Tool ecosystem. Enables autonomous bug triaging and querying directly from IDEs, cutting security workflow latency.
+        </p>
+        <div class="project-tags">
+          <span class="tag">MCP</span>
+          <span class="tag">OWASP BLT</span>
+          <span class="tag">AI Agents</span>
+          <span class="tag">Security</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AWARDS ===== -->
+  <section class="reveal">
+    <div class="section-label">04. Milestones</div>
+    <h2 class="section-title" style="margin-bottom: 2rem;">Awards & Certifications</h2>
+
+    <div class="awards-grid">
+      <div class="glass-card award-card">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/245.gif" height="50" class="poke-sprite glow-blue" alt="Suicune">
+        <div>
+          <div class="award-title">Hack Together 2025 Winner</div>
+          <div class="award-meta">National Hackathon • 2025</div>
+        </div>
+      </div>
+
+      <div class="glass-card award-card">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/244.gif" height="50" class="poke-sprite glow-fire" alt="Entei">
+        <div>
+          <div class="award-title">State Level Debate Winner</div>
+          <div class="award-meta">Govt. of Karnataka • July 2025</div>
+        </div>
+      </div>
+
+      <div class="glass-card award-card">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/243.gif" height="50" class="poke-sprite glow-electric" alt="Raikou">
+        <div>
+          <div class="award-title">HP AI for Beginners</div>
+          <div class="award-meta">HP Certification • Sept 2025</div>
+        </div>
+      </div>
+
+      <div class="glass-card award-card">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/197.gif" height="50" class="poke-sprite glow-electric" alt="Umbreon">
+        <div>
+          <div class="award-title">Generative AI Mastermind</div>
+          <div class="award-meta">OutSkill Certification</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="reveal">
+    
+    <div class="footer-pokemon-row">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif" height="70" class="poke-sprite glow-fire" alt="Charizard">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/9.gif" height="60" class="poke-sprite glow-blue" alt="Blastoise">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/3.gif" height="60" class="poke-sprite glow-grass" alt="Venusaur">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif" height="70" class="poke-sprite glow-dragon" alt="Dragonite">
+    </div>
+
+    <div class="glass-card" style="max-width: 600px; margin: 0 auto 3rem; padding: 3rem 2rem;">
+      <h2 style="font-size: 24px; margin-bottom: 1rem;">Let's build something remarkable.</h2>
+      <p style="color: var(--muted); margin-bottom: 2rem;">I am currently open to internship opportunities and open-source collaborations.</p>
+      <div class="links-row" style="margin-bottom:0;">
+        <a href="mailto:koushikmahadev3@gmail.com" class="link-btn">
+          <i data-lucide="mail" width="18" height="18"></i> Get in Touch
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-text">Built with <span style="font-size: 14px;">♥</span> by Koushik M</p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(element => {
+      observer.observe(element);
+    });
+  </script>
+</body>
+</html>
