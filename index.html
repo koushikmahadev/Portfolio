@@ -1,581 +1,837 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Koushik M — Software Engineer & AI Builder</title>
   
-  <!-- Modern Fonts -->
+  <!-- Premium Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
   
-  <!-- Devicons -->
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Tailwind CSS Configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            dark: '#030305',
+            surface: 'rgba(15, 15, 20, 0.65)',
+            gold: '#eab308',
+            cyan: '#06b6d4',
+            purple: '#a855f7',
+          },
+          backgroundImage: {
+            'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+            'mesh': 'radial-gradient(at 40% 20%, rgba(168, 85, 247, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(234, 179, 8, 0.15) 0px, transparent 50%)',
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    :root {
-      --bg: #09090b;
-      --surface: rgba(24, 24, 27, 0.4);
-      --surface-hover: rgba(39, 39, 42, 0.6);
-      --card: rgba(20, 20, 25, 0.65);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-light: rgba(255, 255, 255, 0.15);
-      --border-hover: rgba(234, 179, 8, 0.5);
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-      --accent: #eab308; 
-      --accent-glow: rgba(234, 179, 8, 0.2);
-      --code-font: 'Fira Code', monospace;
-      --body-font: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    /* ==========================================================================
+       1. GLOBAL & CUSTOM CURSOR
+       ========================================================================== */
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: var(--body-font);
+      background-color: #030305;
+      color: #ffffff;
       overflow-x: hidden;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
+      cursor: none; 
+    }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #030305; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #eab308; }
+
+    ::selection { background: #eab308; color: #000; }
+
+    /* Custom Cursor */
+    .cursor-dot {
+      position: fixed; top: 0; left: 0; width: 6px; height: 6px;
+      background: #eab308; border-radius: 50%; pointer-events: none;
+      transform: translate(-50%, -50%); z-index: 999999;
+      box-shadow: 0 0 10px #eab308, 0 0 20px #eab308;
+    }
+    .cursor-ring {
+      position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+      border: 1.5px solid rgba(6, 182, 212, 0.6); border-radius: 50%;
+      pointer-events: none; transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s; z-index: 999998;
+    }
+    body.hovering .cursor-ring {
+      width: 70px; height: 70px; background-color: rgba(234, 179, 8, 0.1); border-color: #eab308;
     }
 
-    /* Glossy Grid Background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 50px 50px;
-      z-index: -2;
-      pointer-events: none;
+    /* Interactive Background Canvas */
+    #ambient-canvas {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -1; pointer-events: none;
     }
 
-    .ambient-glow {
-      position: fixed;
-      top: -20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60vw;
-      height: 60vw;
-      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
-      border-radius: 50%;
-      z-index: -1;
-      pointer-events: none;
-      filter: blur(100px);
+    /* Ambient Mouse Glow Spotlight */
+    #mouse-glow {
+      position: fixed; top: 0; left: 0; width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(168,85,247,0.1) 0%, rgba(6,182,212,0.05) 40%, transparent 70%);
+      transform: translate(-50%, -50%); pointer-events: none; z-index: 0;
     }
 
-    /* Glass Effect Class */
-    .glass-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* ==========================================================================
+       2. ENTRY SCREEN & GEAR 5 INTRO SEQUENCE
+       ========================================================================== */
+    #entry-screen {
+      position: fixed; inset: 0; background: #000; z-index: 100002;
+      display: flex; justify-content: center; align-items: center;
+      transition: opacity 0.4s ease;
     }
-
-    .glass-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-    }
-
-    /* Floating Pokémon Animation */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-    .poke-sprite {
-      image-rendering: pixelated;
-      animation: float 3.5s ease-in-out infinite;
-    }
-
-    /* Specific Glows for Pokémon */
-    .glow-fire { filter: drop-shadow(0 0 12px rgba(255, 85, 0, 0.6)); }
-    .glow-electric { filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6)); }
-    .glow-dragon { filter: drop-shadow(0 0 12px rgba(255, 165, 0, 0.5)); }
-    .glow-psychic { filter: drop-shadow(0 0 12px rgba(186, 85, 211, 0.6)); }
-    .glow-blue { filter: drop-shadow(0 0 12px rgba(0, 191, 255, 0.6)); }
-    .glow-dark { filter: drop-shadow(0 0 12px rgba(147, 112, 219, 0.5)); }
-    .glow-grass { filter: drop-shadow(0 0 12px rgba(50, 205, 50, 0.5)); }
-
-    /* ===== HERO ===== */
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 2rem;
-      text-align: center;
-    }
-
-    .hero-pokemon-row {
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-end;
-      justify-content: center;
-      margin-bottom: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 0.2s forwards;
-    }
-    .hero-pokemon-row img:nth-child(2) { animation-delay: 0.5s; height: 90px; }
-    .hero-pokemon-row img:nth-child(3) { animation-delay: 1s; }
-
-    .code-window {
-      background: rgba(10, 10, 12, 0.8);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: left;
-      margin-bottom: 2.5rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-      opacity: 0;
-      animation: fadeUp 0.8s ease 0.4s forwards;
-      min-width: 320px;
-    }
-    .window-controls { display: flex; gap: 8px; margin-bottom: 1rem; }
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
-    .dot.red { background: #ff5f56; box-shadow: 0 0 10px #ff5f56; }
-    .dot.yellow { background: #ffbd2e; box-shadow: 0 0 10px #ffbd2e; }
-    .dot.green { background: #27c93f; box-shadow: 0 0 10px #27c93f; }
-
-    .code-block { font-family: var(--code-font); font-size: 13px; color: var(--muted); line-height: 1.7; }
-    .code-block .keyword { color: #c678dd; } 
-    .code-block .variable { color: #eab308; text-shadow: 0 0 8px rgba(234,179,8,0.4); } 
-    .code-block .string { color: #98c379; }
-
-    h1.name {
-      font-size: clamp(36px, 6vw, 64px);
-      font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 0.5rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 0.6s forwards;
-      background: linear-gradient(to right, #fff, #eab308);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 40px rgba(234,179,8,0.3);
-    }
-
-    .tagline {
-      font-size: 16px;
-      color: var(--muted);
-      margin-bottom: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 0.8s forwards;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .links-row {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 1s forwards;
-      margin-bottom: 2rem;
-    }
-
-    .link-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 24px;
-      border-radius: 100px;
-      border: 1px solid var(--border-light);
-      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+    .init-btn {
+      position: relative; padding: 18px 45px; font-family: var(--font-mono); font-size: 14px; font-weight: 700;
+      color: #fff; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      cursor: none; letter-spacing: 4px; overflow: hidden; transition: all 0.4s ease;
       backdrop-filter: blur(10px);
-      color: var(--text);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    .link-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      box-shadow: 0 0 20px rgba(234,179,8,0.2), inset 0 0 10px rgba(234,179,8,0.1);
-      transform: translateY(-2px);
+    .init-btn::before {
+      content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.4), transparent);
+      transform: translateX(-100%); transition: transform 0.6s ease;
     }
+    .init-btn:hover { border-color: #eab308; box-shadow: 0 0 30px rgba(234, 179, 8, 0.4); text-shadow: 0 0 10px #eab308; }
+    .init-btn:hover::before { transform: translateX(100%); }
 
-    /* ===== SECTIONS ===== */
-    section {
-      position: relative;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 5rem 2rem;
+    #preloader {
+      position: fixed; inset: 0; background: #030305; z-index: 100000;
+      display: flex; justify-content: center; align-items: center; overflow: hidden;
     }
-
-    .section-label {
-      font-family: var(--code-font);
-      font-size: 13px;
-      color: var(--accent);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .section-label::before { content: ''; width: 40px; height: 1px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-
-    .section-header-poke {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    h2.section-title { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; margin: 0; }
-
-    /* ===== ABOUT ===== */
-    .about-text { font-size: 18px; line-height: 1.8; color: var(--muted); }
-    .about-text strong { color: var(--text); font-weight: 500; }
-    .about-text a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--accent); transition: color 0.2s; }
-    .about-text a:hover { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
-
-    /* ===== SKILLS ===== */
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1.25rem;
-    }
-    .skill-card { padding: 1.25rem; display: flex; align-items: center; gap: 12px; }
-    .skill-icon { font-size: 28px; color: var(--text); width: 32px; text-align: center; }
-    .skill-name { font-size: 14px; font-weight: 600; color: var(--text); }
-    .skill-type { font-size: 12px; color: var(--muted); }
-
-    /* ===== PROJECTS ===== */
-    .projects-grid { display: flex; flex-direction: column; gap: 2rem; }
-    .project-card { padding: 2rem; }
-    .project-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .project-title-group { display: flex; align-items: center; gap: 16px; }
-    .project-title-group h3 { font-size: 22px; font-weight: 600; }
     
-    .project-desc { font-size: 16px; color: var(--muted); margin-bottom: 1.5rem; }
-    .project-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .tag {
-      font-size: 12px; font-family: var(--code-font); padding: 6px 14px;
-      border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--text);
-      border: 1px solid var(--border-light); transition: all 0.2s;
+    .g5-environment { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
+    
+    .joyboy-cloud {
+      position: absolute; border: 3px dashed rgba(234, 179, 8, 0.4); border-radius: 50%;
+      animation: drumOfLiberation 4s linear infinite; opacity: 0; transition: opacity 1s;
+      box-shadow: 0 0 40px rgba(234, 179, 8, 0.2);
     }
-    .tag:hover { background: rgba(234, 179, 8, 0.1); border-color: var(--accent); color: var(--accent); }
+    .cloud-1 { width: 350px; height: 350px; }
+    .cloud-2 { width: 550px; height: 550px; animation-direction: reverse; border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 0 40px rgba(6, 182, 212, 0.2); }
+    @keyframes drumOfLiberation { 100% { transform: rotate(360deg) scale(1.1); } }
 
-    /* ===== AWARDS ===== */
-    .awards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-    .award-card { padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
-    .award-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-    .award-meta { font-size: 13px; color: var(--muted); }
-
-    /* ===== FOOTER ===== */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 4rem 2rem 2rem;
-      text-align: center;
-      background: linear-gradient(0deg, rgba(234, 179, 8, 0.02) 0%, transparent 100%);
+    #gear5-gif {
+      position: absolute; width: 450px; height: 450px; object-fit: contain;
+      z-index: 5; opacity: 0; transition: opacity 0.5s ease;
+      filter: drop-shadow(0 0 30px rgba(234, 179, 8, 0.6));
     }
 
-    .footer-pokemon-row {
+    .lightning-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 20; }
+    .trigger-flash { animation: gear5Strike 0.6s ease-out forwards; }
+    @keyframes gear5Strike { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+    .k-container {
+      position: relative; z-index: 10; width: 180px; height: 220px;
+      transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.6s ease;
+    }
+    .k-svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 20px rgba(0,0,0,0.8)); }
+    .k-path {
+      fill: transparent; stroke: #eab308; stroke-width: 4;
+      stroke-dasharray: 800; stroke-dashoffset: 800;
+    }
+    
+    #preloader.start-anim .k-path {
+      animation: drawK 1.5s cubic-bezier(0.45, 0, 0.15, 1) forwards,
+                 fillK 0.3s ease forwards 1.5s,
+                 glowK 0.3s ease forwards 1.5s;
+    }
+    #preloader.start-anim .joyboy-cloud { opacity: 1; }
+    
+    @keyframes drawK { to { stroke-dashoffset: 0; } }
+    @keyframes fillK { to { fill: #ffffff; stroke: #ffffff; } }
+    @keyframes glowK { to { filter: drop-shadow(0 0 40px #eab308) drop-shadow(0 0 80px rgba(255,255,255,0.8)); } }
+    .trigger-popout { transform: scale(50); opacity: 0; }
+
+    /* ==========================================================================
+       3. 3D EFFECTS, COLORING & UI
+       ========================================================================== */
+    .site-wrapper { opacity: 0; transition: opacity 0.8s ease; position: relative; z-index: 10; }
+    body.loaded .site-wrapper { opacity: 1; }
+
+    /* Beautiful Grid Overlay */
+    .grid-overlay {
+      position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    }
+
+    /* Animated Gradient Borders for Bento Cards */
+    .bento-card {
+      position: relative; border-radius: 1.5rem; background: #0a0a0c; z-index: 1;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .bento-card::before {
+      content: ""; position: absolute; inset: -1.5px; border-radius: 1.6rem; z-index: -1;
+      background: linear-gradient(45deg, #eab308, #a855f7, #06b6d4, #eab308);
+      background-size: 300% 300%; animation: gradientBorder 6s linear infinite;
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .bento-card:hover { transform: translateY(-8px) scale(1.02); }
+    .bento-card:hover::before { opacity: 1; }
+    @keyframes gradientBorder { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    
+    .bento-inner {
+      background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(20px);
+      border-radius: 1.4rem; height: 100%; border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Pokémon 3D Hover Physics */
+    .poke-sprite { image-rendering: pixelated; animation: floatHover 4s ease-in-out infinite; }
+    .poke-sprite.charizard { filter: drop-shadow(0 0 25px rgba(255, 85, 0, 0.8)); }
+    .poke-sprite.dragonite { animation-delay: 0.5s; filter: drop-shadow(0 0 25px rgba(255, 165, 0, 0.8)); }
+    .poke-sprite.raikou { animation-delay: 1s; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); }
+    @keyframes floatHover { 50% { transform: translateY(-20px) scale(1.05); } }
+
+    /* 3D Magnetic Cards with Multi-Color Glare */
+    .card-3d-wrapper { perspective: 1500px; transform-style: preserve-3d; }
+    .card-3d-inner {
+      position: relative; transform-style: preserve-3d;
+      transition: transform 0.1s ease, border-color 0.3s ease; overflow: hidden;
+    }
+    .card-glare {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(234,179,8,0.15), rgba(6,182,212,0.1) 40%, transparent 70%);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 5; mix-blend-mode: screen;
+    }
+    .card-3d-inner:hover .card-glare { opacity: 1; }
+    .card-content { transform: translateZ(50px); position: relative; z-index: 10; }
+
+    /* ==========================================================================
+       4. FIXED: 3D SKILLS WHEEL
+       ========================================================================== */
+    .wheel-viewport { 
+      perspective: 1000px; 
+      transform-style: preserve-3d; 
+      cursor: grab; 
       display: flex;
       justify-content: center;
-      gap: 2rem;
-      margin-bottom: 3rem;
-      flex-wrap: wrap;
+      align-items: center;
+      overflow: hidden; /* Prevent items from bleeding outside */
     }
-    .footer-pokemon-row img:nth-child(2) { animation-delay: 0.5s; }
-    .footer-pokemon-row img:nth-child(3) { animation-delay: 1s; }
-    .footer-pokemon-row img:nth-child(4) { animation-delay: 1.5s; }
-
-    .footer-bottom { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-    .footer-text { font-family: var(--code-font); font-size: 12px; color: var(--muted); }
-    .footer-text span { color: var(--accent); text-shadow: 0 0 5px var(--accent); }
+    .wheel-viewport:active { cursor: grabbing; }
     
-    /* Scroll Reveal */
-    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-    .reveal.visible { opacity: 1; transform: none; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Badge */
-    .badge-gold {
-      display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 14px;
-      border-radius: 100px; border: 1px solid rgba(234, 179, 8, 0.4);
-      color: var(--accent); background: rgba(234, 179, 8, 0.1); font-weight: 600;
-      box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+    .skills-wheel { 
+      position: relative;
+      /* Act as a 0x0 pivot point dead center */
+      width: 0px; 
+      height: 0px; 
+      transform-style: preserve-3d; 
+      transition: transform 0.1s ease-out; 
     }
+    
+    .wheel-item {
+      position: absolute; 
+      /* Fixed item dimensions centered directly on the 0x0 pivot */
+      width: 200px; height: 60px;
+      top: -30px; left: -100px; 
+      display: flex; justify-content: center; align-items: center;
+      background: rgba(10, 10, 15, 0.7); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 35px rgba(0,0,0,0.6);
+      transition: all 0.3s ease; font-family: var(--font-display); font-weight: 700; letter-spacing: 1px;
+    }
+    @media (min-width: 768px) {
+      .wheel-item { width: 280px; height: 80px; top: -40px; left: -140px; }
+    }
+    .wheel-item:hover {
+      border-color: #06b6d4; color: #fff; text-shadow: 0 0 10px #06b6d4;
+      background: rgba(6,182,212,0.1); box-shadow: 0 0 40px rgba(6,182,212,0.3);
+    }
+
+    /* Scroll Reveal */
+    .reveal { opacity: 0; transform: translateY(50px) scale(0.95); transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* Input Styling */
+    .input-field {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease; backdrop-filter: blur(5px);
+    }
+    .input-field:focus {
+      background: rgba(168, 85, 247, 0.05); border-color: #a855f7; box-shadow: 0 0 25px rgba(168,85,247,0.2);
+      outline: none; transform: translateY(-2px);
+    }
+    
+    /* Gradient Text */
+    .text-gradient {
+      background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-image: linear-gradient(90deg, #eab308, #a855f7, #06b6d4);
+      background-size: 200% auto; animation: textShine 4s linear infinite;
+    }
+    @keyframes textShine { to { background-position: 200% center; } }
   </style>
 </head>
-<body>
+<body class="antialiased">
 
-  <div class="ambient-glow"></div>
+  <!-- Audio Element: Drums of Liberation -->
+  <audio id="drums-audio" src="https://assets.mixkit.co/active_storage/sfx/576/576-preview.mp3" preload="auto" loop></audio>
 
-  <!-- ===== HERO ===== -->
-  <main class="hero">
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- Ambient WebGL/Canvas Background & Mouse Spotlight -->
+  <canvas id="ambient-canvas"></canvas>
+  <div id="mouse-glow"></div>
+
+  <!-- ==========================================================================
+       USER INTERACTION ENTRY
+       ========================================================================== -->
+  <div id="entry-screen">
+    <button class="init-btn interactive-card" id="start-btn">INITIALIZE SYSTEM</button>
+  </div>
+
+  <!-- ==========================================================================
+       ONE PIECE GEAR 5 INTRO
+       ========================================================================== -->
+  <div id="preloader">
+    <div class="lightning-flash" id="intro-flash"></div>
     
-    <div class="hero-pokemon-row">
-      <!-- Charizard, Dragonite, Raikou from your original request -->
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif" height="75" class="poke-sprite glow-fire" alt="Charizard">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif" class="poke-sprite glow-dragon" alt="Dragonite">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/243.gif" height="75" class="poke-sprite glow-electric" alt="Raikou">
+    <div class="g5-environment">
+      <div class="joyboy-cloud cloud-1"></div>
+      <div class="joyboy-cloud cloud-2"></div>
+      <!-- Valid Tenor Gear 5 GIF -->
+      <img src="https://media.tenor.com/Z4eM0K-FidIAAAAj/luffy-gear-5.gif" id="gear5-gif" alt="Gear 5">
     </div>
-
-    <div class="code-window">
-      <div class="window-controls">
-        <div class="dot red"></div>
-        <div class="dot yellow"></div>
-        <div class="dot green"></div>
-      </div>
-      <div class="code-block">
-        <span class="keyword">const</span> <span class="variable">developer</span> = {<br>
-        &nbsp;&nbsp;name: <span class="string">"Koushik M"</span>,<br>
-        &nbsp;&nbsp;role: <span class="string">"Software Engineer"</span>,<br>
-        &nbsp;&nbsp;focus: [<span class="string">"AI Systems"</span>, <span class="string">"Dev Tooling"</span>],<br>
-        &nbsp;&nbsp;status: <span class="string">"Building & Shipping"</span><br>
-        };
-      </div>
+    
+    <div class="k-container" id="k-wrapper">
+      <svg viewBox="0 0 100 120" class="k-svg">
+        <path class="k-path" d="M20,10 L40,10 L40,50 L75,10 L100,10 L55,58 L100,110 L75,110 L40,65 L40,110 L20,110 Z" />
+      </svg>
     </div>
+  </div>
 
-    <h1 class="name">Koushik M</h1>
-    <p class="tagline">
-      19 <span>•</span> Building AI Systems <span>•</span> UVCE Bangalore
-    </p>
-
-    <div class="links-row">
-      <a href="https://github.com/koushikmahadev" class="link-btn" target="_blank">
-        <i data-lucide="github" width="18" height="18"></i> GitHub
-      </a>
-      <a href="https://linkedin.com/in/koushikmahadev" class="link-btn" target="_blank">
-        <i data-lucide="linkedin" width="18" height="18"></i> LinkedIn
-      </a>
-      <a href="mailto:koushikmahadev3@gmail.com" class="link-btn">
-        <i data-lucide="mail" width="18" height="18"></i> Email
-      </a>
-    </div>
-  </main>
-
-  <!-- ===== ABOUT ===== -->
-  <section class="reveal">
-    <div class="section-label">01. About</div>
-    <div class="section-header-poke">
-      <h2 class="section-title">Who am I?</h2>
-    </div>
-    <div class="glass-card" style="padding: 2rem;">
-      <p class="about-text">
-        I'm a first-year ISE student at <strong>UVCE, Bangalore</strong>, shipping production-grade AI systems from day one. 
-        I build at the intersection of healthcare automation and developer tooling — from an end-to-end cardiac triage platform using Azure AI and Power Platform, to containerized productivity tools.
-        <br><br>
-        I've also contributed to real security workflows by integrating the Model Context Protocol (MCP) into the OWASP Bug Logging Tool ecosystem. Not a 10x developer yet — but getting there, one shipped project at a time.
-      </p>
-    </div>
-  </section>
-
-  <!-- ===== SKILLS ===== -->
-  <section class="reveal">
-    <div class="section-label">02. Arsenal</div>
-    <div class="section-header-poke">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/196.gif" height="55" class="poke-sprite glow-psychic" alt="Espeon">
-      <h2 class="section-title">Languages & Tools</h2>
-    </div>
-
-    <div class="skills-grid">
-      <!-- Languages -->
-      <div class="glass-card skill-card">
-        <i class="devicon-c-plain skill-icon"></i>
-        <div><div class="skill-name">C / C++</div><div class="skill-type">System & Logic</div></div>
-      </div>
-      <div class="glass-card skill-card">
-        <i class="devicon-java-plain skill-icon"></i>
-        <div><div class="skill-name">Java</div><div class="skill-type">Backend</div></div>
-      </div>
-      <div class="glass-card skill-card">
-        <i class="devicon-typescript-plain skill-icon"></i>
-        <div><div class="skill-name">TypeScript</div><div class="skill-type">Language</div></div>
-      </div>
-      <div class="glass-card skill-card">
-        <i class="devicon-python-plain skill-icon"></i>
-        <div><div class="skill-name">Python</div><div class="skill-type">Language / AI</div></div>
-      </div>
-      <div class="glass-card skill-card">
-        <i class="devicon-docker-plain skill-icon"></i>
-        <div><div class="skill-name">Docker</div><div class="skill-type">Containerization</div></div>
-      </div>
-      <div class="glass-card skill-card">
-        <i class="devicon-nodejs-plain skill-icon"></i>
-        <div><div class="skill-name">Node.js</div><div class="skill-type">Runtime</div></div>
-      </div>
+  <!-- ==========================================================================
+       MAIN SITE STRUCTURE
+       ========================================================================== -->
+  <div class="site-wrapper flex flex-col items-center bg-mesh">
+    
+    <div class="w-full max-w-[1250px] px-6 md:px-12 relative">
+      <div class="grid-overlay"></div>
       
-      <!-- AI / Tools -->
-      <div class="glass-card skill-card">
-        <i data-lucide="cloud" class="skill-icon"></i>
-        <div><div class="skill-name">Azure AI</div><div class="skill-type">Cloud Intelligence</div></div>
-      </div>
-      <div class="glass-card skill-card">
-        <i data-lucide="bot" class="skill-icon"></i>
-        <div><div class="skill-name">Copilot Studio</div><div class="skill-type">AI Agents</div></div>
-      </div>
-      <div class="glass-card skill-card">
-        <i data-lucide="network" class="skill-icon"></i>
-        <div><div class="skill-name">MCP Protocol</div><div class="skill-type">Model Context</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== PROJECTS ===== -->
-  <section class="reveal">
-    <div class="section-label">03. Work</div>
-    <h2 class="section-title" style="margin-bottom: 2rem;">Featured Projects</h2>
-
-    <div class="projects-grid">
-      <!-- Project 1 -->
-      <div class="glass-card project-card">
-        <div class="project-header">
-          <div class="project-title-group">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/644.gif" height="60" class="poke-sprite glow-blue" alt="Zekrom">
-            <h3>Cardio-Triage AI</h3>
-          </div>
-          <span class="badge-gold">Featured</span>
+      <!-- NAV -->
+      <nav class="flex justify-between items-center py-8 border-b border-white/10 font-mono text-sm relative z-20">
+        <div class="font-bold tracking-tight text-white magnetic-btn cursor-pointer text-lg">
+          <span class="text-gold">&lt;</span>KOUSHIK_M <span class="text-gold">/&gt;</span>
         </div>
-        <p class="project-desc">
-          An end-to-end triage system designed to reduce life-critical delays in cardiac care. Automates the full journey from patient intake and lab report analysis to urgent specialist scheduling using AI Builder.
+        <div class="flex items-center gap-3 text-gray-400 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
+          <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4] animate-pulse"></div>
+          <span class="tracking-widest text-[10px] uppercase font-bold text-cyan-100 hidden sm:block">Neural Link Active</span>
+        </div>
+      </nav>
+
+      <!-- HERO SECTION -->
+      <main id="hero-section" class="py-24 md:py-32 relative transform-style-3d z-10">
+        <div class="flex items-end gap-6 mb-12 hero-elements">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif" class="poke-sprite charizard h-24" alt="Charizard">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif" class="poke-sprite dragonite h-28" alt="Dragonite">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/243.gif" class="poke-sprite raikou h-24" alt="Raikou">
+        </div>
+        
+        <div class="flex items-center gap-4 mb-6 hero-elements">
+          <div class="w-12 h-[2px] bg-gradient-to-r from-gold to-purple"></div>
+          <span class="font-mono text-cyan-400 text-sm tracking-[0.3em] uppercase font-bold drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]">Software Engineer</span>
+        </div>
+
+        <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-black tracking-tight leading-[1.1] mb-8 hero-elements drop-shadow-2xl">
+          Building AI systems & <br><span class="text-gradient">secure architectures.</span>
+        </h1>
+
+        <p class="text-gray-300 text-lg md:text-xl max-w-2xl leading-relaxed hero-elements font-medium mb-10">
+          First-year student at UVCE Bangalore. Shipping production-grade AI platforms, isolated dev containers, and clean logical interfaces.
         </p>
-        <div class="project-tags">
-          <span class="tag">Power Platform</span>
-          <span class="tag">Copilot Studio</span>
-          <span class="tag">Power Automate</span>
-          <span class="tag">Azure AI</span>
-        </div>
-      </div>
 
-      <!-- Project 2 -->
-      <div class="glass-card project-card">
-        <div class="project-header">
-          <div class="project-title-group">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/448.gif" height="55" class="poke-sprite glow-blue" alt="Lucario">
-            <h3>FocusFlow</h3>
+        <!-- New Links Added Here -->
+        <div class="flex flex-wrap gap-5 hero-elements">
+          <a href="https://drive.google.com/file/d/1A4xa4pLEozo_PnLWt5gqaBbJkpTrcWOi/view?usp=sharing" target="_blank" class="magnetic-btn px-8 py-4 font-mono text-sm font-bold tracking-widest text-black bg-gradient-to-r from-gold to-yellow-300 rounded-xl hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] transition-all duration-300 hover:scale-105 flex items-center gap-2 cursor-none">
+            <i data-lucide="file-text" class="w-4 h-4"></i> ACCESS RESUME
+          </a>
+          <a href="#work" class="magnetic-btn px-8 py-4 font-mono text-sm font-bold tracking-widest text-white border border-white/20 bg-white/5 backdrop-blur-md rounded-xl hover:bg-white/10 hover:border-white/40 transition-all duration-300 flex items-center gap-2 cursor-none">
+            VIEW PROJECTS <i data-lucide="arrow-down" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </main>
+
+      <!-- 01: IDENTITY (Bento Box Style) -->
+      <section class="py-24 border-t border-white/10 reveal relative z-10">
+        <div class="flex items-center gap-4 mb-12">
+          <div class="font-mono text-purple text-lg font-bold">01 //</div>
+          <h2 class="text-2xl tracking-[0.2em] uppercase text-white font-display font-bold">Identity</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bento-card md:col-span-2 interactive-card">
+            <div class="bento-inner p-10 flex flex-col justify-center card-3d-inner">
+              <div class="card-glare"></div>
+              <div class="card-content">
+                <h3 class="text-2xl font-bold mb-4 text-white">The Engineering Protocol</h3>
+                <p class="text-gray-400 text-lg leading-relaxed">
+                  I build software models at the intersection of automated intelligence architectures and structural developer tools. Currently based out of <strong class="text-cyan-400">UVCE, Bangalore</strong>, I focus on transforming data pathways into performant, scalable software tools.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="bento-card interactive-card">
+            <div class="bento-inner p-10 flex flex-col justify-center items-center text-center card-3d-inner">
+              <div class="card-glare"></div>
+              <div class="card-content">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-gold to-purple flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(234,179,8,0.4)]">
+                  <span class="font-mono font-bold text-2xl text-black">UVCE</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Location Data</h3>
+                <p class="text-gray-400 font-mono text-sm">Bengaluru, Karnataka<br>India</p>
+              </div>
+            </div>
           </div>
         </div>
-        <p class="project-desc">
-          An intelligent productivity platform that safeguards deep work by managing digital interruptions and orchestrating tasks. Architected for portability with Docker for seamless environment consistency.
-        </p>
-        <div class="project-tags">
-          <span class="tag">TypeScript</span>
-          <span class="tag">Docker</span>
-          <span class="tag">Node.js</span>
-          <span class="tag">PowerShell</span>
-        </div>
-      </div>
+      </section>
 
-      <!-- Project 3 -->
-      <div class="glass-card project-card">
-        <div class="project-header">
-          <div class="project-title-group">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/472.gif" height="55" class="poke-sprite glow-dark" alt="Gliscor">
-            <h3>BLT-MCP Integration</h3>
+      <!-- 02: ARSENAL (PERFECTLY ALIGNED 3D WHEEL) -->
+      <section class="py-24 border-t border-white/10 reveal relative z-10">
+        <div class="flex items-center gap-4 mb-12">
+          <div class="font-mono text-cyan-400 text-lg font-bold">02 //</div>
+          <h2 class="text-2xl tracking-[0.2em] uppercase text-white font-display font-bold">Arsenal</h2>
+        </div>
+        
+        <div class="wheel-viewport rounded-3xl h-[450px] md:h-[550px] glass-panel relative" id="wheel-container">
+          <div class="absolute top-8 left-8 font-mono text-xs text-cyan-400 tracking-[0.2em] z-20 flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            SCROLL OR DRAG TO REVOLVE
+          </div>
+          
+          <!-- The Wheel acts as a 0x0 pivot point exactly in the center -->
+          <div class="skills-wheel" id="skills-wheel">
+            <!-- JS Populates 3D Carousel Items -->
           </div>
         </div>
-        <p class="project-desc">
-          Integrated Model Context Protocol (MCP) to bridge AI agents with the OWASP Bug Logging Tool ecosystem. Enables autonomous bug triaging and querying directly from IDEs, cutting security workflow latency.
-        </p>
-        <div class="project-tags">
-          <span class="tag">MCP</span>
-          <span class="tag">OWASP BLT</span>
-          <span class="tag">AI Agents</span>
-          <span class="tag">Security</span>
+      </section>
+
+      <!-- 03: PROJECTS (3D TILT CARDS WITH LINKS) -->
+      <section id="work" class="py-24 border-t border-white/10 reveal relative z-10">
+        <div class="flex items-center gap-4 mb-12">
+          <div class="font-mono text-gold text-lg font-bold">03 //</div>
+          <h2 class="text-2xl tracking-[0.2em] uppercase text-white font-display font-bold">Realized Logic</h2>
         </div>
-      </div>
-    </div>
-  </section>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          <!-- Card 1: Cardio Triage -->
+          <div class="bento-card interactive-card min-h-[440px]">
+            <div class="bento-inner p-8 md:p-10 flex flex-col justify-between card-3d-inner">
+              <div class="card-glare"></div>
+              <div class="card-content h-full flex flex-col">
+                <div>
+                  <div class="flex justify-between items-start mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-400/20 flex items-center justify-center border border-cyan-400/30 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                      <i data-lucide="cloud-lightning" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-mono text-xs text-gray-500 uppercase tracking-widest">Cloud AI</span>
+                  </div>
+                  <h3 class="text-3xl font-display font-bold mb-4 text-white">Cardio-Triage AI Platform</h3>
+                  <p class="text-gray-400 text-[17px] mb-6 leading-relaxed">
+                    Automated logic triage infrastructure handling multi-modal pipeline streams from health intakes down into scheduling nodes through Azure AI integrations.
+                  </p>
+                  
+                  <!-- Project Links -->
+                  <div class="flex gap-4 mb-8">
+                    <a href="https://github.com/koushikmahadev/cardio-triage-AI" target="_blank" class="flex items-center gap-2 font-mono text-xs font-bold text-white hover:text-cyan-400 transition-colors cursor-none">
+                      <i data-lucide="github" class="w-4 h-4"></i> SOURCE CODE
+                    </a>
+                  </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-3 font-mono text-xs text-cyan-300 mt-auto">
+                  <span class="px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10">Azure AI</span>
+                  <span class="px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10">Copilot Studio</span>
+                  <span class="px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10">Power Automate</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-  <!-- ===== AWARDS ===== -->
-  <section class="reveal">
-    <div class="section-label">04. Milestones</div>
-    <h2 class="section-title" style="margin-bottom: 2rem;">Awards & Certifications</h2>
+          <!-- Card 2: Focus Flow -->
+          <div class="bento-card interactive-card min-h-[440px]">
+            <div class="bento-inner p-8 md:p-10 flex flex-col justify-between card-3d-inner">
+              <div class="card-glare"></div>
+              <div class="card-content h-full flex flex-col">
+                <div>
+                  <div class="flex justify-between items-start mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-purple/20 flex items-center justify-center border border-purple/30 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                      <i data-lucide="terminal-square" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-mono text-xs text-gray-500 uppercase tracking-widest">Dev Tools</span>
+                  </div>
+                  <h3 class="text-3xl font-display font-bold mb-4 text-white">FocusFlow Architecture</h3>
+                  <p class="text-gray-400 text-[17px] mb-6 leading-relaxed">
+                    Developer environment containment tool maximizing processing deep work loops via explicit operational orchestration parameters inside isolated Docker states.
+                  </p>
+                  
+                  <!-- Project Links -->
+                  <div class="flex gap-4 mb-8">
+                    <a href="https://focus-flow-seven-rose.vercel.app/" target="_blank" class="flex items-center gap-2 font-mono text-xs font-bold text-purple-400 hover:text-white transition-colors cursor-none">
+                      <i data-lucide="external-link" class="w-4 h-4"></i> LIVE DEMO
+                    </a>
+                    <a href="https://github.com/koushikmahadev/Focus-Flow" target="_blank" class="flex items-center gap-2 font-mono text-xs font-bold text-white hover:text-purple-400 transition-colors cursor-none">
+                      <i data-lucide="github" class="w-4 h-4"></i> SOURCE CODE
+                    </a>
+                  </div>
+                </div>
 
-    <div class="awards-grid">
-      <div class="glass-card award-card">
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/245.gif" height="50" class="poke-sprite glow-blue" alt="Suicune">
-        <div>
-          <div class="award-title">Hack Together 2025 Winner</div>
-          <div class="award-meta">National Hackathon • 2025</div>
+                <div class="flex flex-wrap gap-3 font-mono text-xs text-purple-300 mt-auto">
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">TypeScript</span>
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">Docker</span>
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">Node.js</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
-      </div>
+      </section>
 
-      <div class="glass-card award-card">
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/244.gif" height="50" class="poke-sprite glow-fire" alt="Entei">
-        <div>
-          <div class="award-title">State Level Debate Winner</div>
-          <div class="award-meta">Govt. of Karnataka • July 2025</div>
+      <!-- 04: CONTACT -->
+      <section class="py-24 border-t border-white/10 reveal relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div>
+            <div class="flex items-center gap-4 mb-8">
+              <div class="font-mono text-gold text-lg font-bold">04 //</div>
+              <h2 class="text-2xl tracking-[0.2em] uppercase text-white font-display font-bold">Communicate</h2>
+            </div>
+            <h3 class="text-5xl font-display font-black text-white mb-6 leading-tight">Ready to initiate <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-purple to-cyan-400">collaboration?</span></h3>
+            <p class="text-gray-400 text-lg mb-10">
+              Open for architectural discussions, AI integrations, or collaborative builds. Initiate contact sequence below.
+            </p>
+          </div>
+          
+          <div class="glass-panel p-8 md:p-10 rounded-3xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+            <form onsubmit="handleContactSubmit(event)" class="flex flex-col gap-6 cursor-none">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="text" id="user-name" placeholder="IDENTIFIER (NAME)" required class="input-field w-full px-5 py-4 rounded-xl text-white font-mono text-sm placeholder-gray-500 cursor-none">
+                <input type="email" id="user-email" placeholder="COMM-LINK (EMAIL)" required class="input-field w-full px-5 py-4 rounded-xl text-white font-mono text-sm placeholder-gray-500 cursor-none">
+              </div>
+              <textarea id="user-message" placeholder="TRANSMIT DATA..." required class="input-field w-full px-5 py-4 rounded-xl text-white font-sans text-base placeholder-gray-500 min-h-[160px] resize-y cursor-none"></textarea>
+              
+              <button type="submit" class="magnetic-btn w-full md:w-auto self-start px-10 py-5 mt-2 font-mono text-sm font-bold tracking-[0.2em] text-black bg-gradient-to-r from-gold to-yellow-300 rounded-xl hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] transition-all duration-300 cursor-none hover:scale-105">
+                INITIALIZE UPLOAD
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="glass-card award-card">
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/243.gif" height="50" class="poke-sprite glow-electric" alt="Raikou">
-        <div>
-          <div class="award-title">HP AI for Beginners</div>
-          <div class="award-meta">HP Certification • Sept 2025</div>
+      <!-- FOOTER -->
+      <footer class="py-16 text-center reveal border-t border-white/5 relative z-10">
+        <div class="flex justify-center gap-10 mb-12">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/9.gif" alt="Blastoise" class="h-20 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:-translate-y-3 transition-all duration-500 cursor-pointer magnetic-btn filter drop-shadow-[0_0_20px_rgba(6,182,212,0.8)]">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/3.gif" alt="Venusaur" class="h-20 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:-translate-y-3 transition-all duration-500 cursor-pointer magnetic-btn filter drop-shadow-[0_0_20px_rgba(168,85,247,0.8)]">
         </div>
-      </div>
-
-      <div class="glass-card award-card">
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/197.gif" height="50" class="poke-sprite glow-electric" alt="Umbreon">
-        <div>
-          <div class="award-title">Generative AI Mastermind</div>
-          <div class="award-meta">OutSkill Certification</div>
+        <div class="font-mono text-sm text-gray-500 tracking-[0.2em] uppercase">
+          Architecture & Engineering by <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-cyan-400 font-bold">Koushik M</span>
         </div>
-      </div>
-    </div>
-  </section>
+      </footer>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="reveal">
-    
-    <div class="footer-pokemon-row">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif" height="70" class="poke-sprite glow-fire" alt="Charizard">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/9.gif" height="60" class="poke-sprite glow-blue" alt="Blastoise">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/3.gif" height="60" class="poke-sprite glow-grass" alt="Venusaur">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif" height="70" class="poke-sprite glow-dragon" alt="Dragonite">
     </div>
-
-    <div class="glass-card" style="max-width: 600px; margin: 0 auto 3rem; padding: 3rem 2rem;">
-      <h2 style="font-size: 24px; margin-bottom: 1rem;">Let's build something remarkable.</h2>
-      <p style="color: var(--muted); margin-bottom: 2rem;">I am currently open to internship opportunities and open-source collaborations.</p>
-      <div class="links-row" style="margin-bottom:0;">
-        <a href="mailto:koushikmahadev3@gmail.com" class="link-btn">
-          <i data-lucide="mail" width="18" height="18"></i> Get in Touch
-        </a>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p class="footer-text">Built with <span style="font-size: 14px;">♥</span> by Koushik M</p>
-    </div>
-  </footer>
+  </div>
 
   <script>
+    // Initialize Lucide Icons
     lucide.createIcons();
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1 });
+    /* ==========================================================================
+       1. CUSTOM CURSOR & MAGNETIC PHYSICS
+       ========================================================================== */
+    const cursorDot = document.getElementById('cursor-dot');
+    const cursorRing = document.getElementById('cursor-ring');
+    const mouseGlow = document.getElementById('mouse-glow');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX, ringY = mouseY;
 
-    document.querySelectorAll('.reveal').forEach(element => {
-      observer.observe(element);
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+      mouseGlow.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
     });
+
+    function renderCursor() {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      cursorRing.style.transform = `translate(${ringX}px, ${ringY}px)`;
+      requestAnimationFrame(renderCursor);
+    }
+    renderCursor();
+
+    document.querySelectorAll('a, button, input, textarea, .cursor-pointer, .interactive-card').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    });
+
+    document.querySelectorAll('.magnetic-btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - (rect.width / 2);
+        const y = e.clientY - rect.top - (rect.height / 2);
+        btn.style.transform = `translate(${x * 0.4}px, ${y * 0.4}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = `translate(0px, 0px)`;
+        btn.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      });
+      btn.addEventListener('mouseenter', () => { btn.style.transition = 'none'; });
+    });
+
+    /* ==========================================================================
+       2. START SEQUENCE: Instant Transition Fix
+       ========================================================================== */
+    document.getElementById('start-btn').addEventListener('click', function() {
+      const entryScreen = document.getElementById('entry-screen');
+      const preloader = document.getElementById('preloader');
+      const audio = document.getElementById('drums-audio');
+      const gear5Gif = document.getElementById('gear5-gif');
+      const kWrapper = document.getElementById('k-wrapper');
+      const flash = document.getElementById('intro-flash');
+
+      // Hide Entry Button & Play Audio
+      entryScreen.style.opacity = '0';
+      setTimeout(() => entryScreen.style.display = 'none', 500);
+      
+      audio.volume = 0.6;
+      audio.play().catch(e => console.log("Audio play blocked by browser:", e));
+
+      gear5Gif.style.opacity = '1';
+      preloader.classList.add('start-anim');
+      
+      // Timing the Pop-out and Flash (triggering instantly after SVG draw)
+      setTimeout(() => {
+        flash.classList.add('trigger-flash');
+        kWrapper.classList.add('trigger-popout');
+        gear5Gif.style.opacity = '0'; 
+        preloader.style.backgroundColor = "transparent";
+        
+        // INSTANT REVEAL - Removed the delay for the site wrapper
+        document.body.classList.add('loaded');
+        
+        // Clean up DOM and fade audio smoothly
+        setTimeout(() => {
+          preloader.style.display = 'none';
+          let fadeAudio = setInterval(() => {
+            if (audio.volume > 0.05) { audio.volume -= 0.05; }
+            else { audio.pause(); clearInterval(fadeAudio); }
+          }, 200);
+        }, 800); 
+      }, 2000); // Fired right as the 'K' fills with white
+    });
+
+    /* ==========================================================================
+       3. INTERACTIVE CANVAS BACKGROUND (Colorful Orbs)
+       ========================================================================== */
+    const canvas = document.getElementById('ambient-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const colors = ['#eab308', '#06b6d4', '#a855f7'];
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.8; this.vy = (Math.random() - 0.5) * 0.8;
+        this.size = Math.random() * 3 + 1;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
+        gradient.addColorStop(0, this.color);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI*2); 
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      let count = Math.min(window.innerWidth * window.innerHeight / 8000, 150);
+      for(let i=0; i<count; i++) particles.push(new Particle());
+    }
+    initParticles();
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      
+      for(let i=0; i<particles.length; i++) {
+        const dx = mouseX - particles[i].x; const dy = mouseY - particles[i].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 250) {
+          ctx.beginPath();
+          ctx.strokeStyle = `${particles[i].color}${Math.floor((1 - dist/250) * 80).toString(16).padStart(2, '0')}`;
+          ctx.lineWidth = 1.5;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouseX, mouseY);
+          ctx.stroke();
+        }
+      }
+      requestAnimationFrame(renderParticles);
+    }
+    renderParticles();
+
+    /* ==========================================================================
+       4. 3D HERO PARALLAX & BENTO TILT CARDS
+       ========================================================================== */
+    const heroElements = document.querySelectorAll('.hero-elements');
+    window.addEventListener('mousemove', (e) => {
+      const xAxis = (window.innerWidth / 2 - e.pageX) / 60;
+      const yAxis = (window.innerHeight / 2 - e.pageY) / 60;
+      heroElements.forEach(el => { el.style.transform = `translate3d(${xAxis}px, ${yAxis}px, 0)`; });
+    });
+
+    const cards = document.querySelectorAll('.interactive-card');
+    cards.forEach(card => {
+      if(!card.querySelector('.card-3d-inner')) return; 
+      const inner = card.querySelector('.card-3d-inner');
+      const glare = card.querySelector('.card-glare');
+      
+      card.addEventListener('mousemove', (e) => {
+        const rect = inner.getBoundingClientRect();
+        const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+        const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -8;
+        const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 8;
+        
+        inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2), transparent 60%)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        inner.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        glare.style.background = `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.0), transparent 50%)`;
+      });
+    });
+
+    /* ==========================================================================
+       5. ALIGNED 3D SKILLS SCROLL WHEEL (Fixed Geometry)
+       ========================================================================== */
+    const skillsList = [
+      "C / C++", "Java Backend", "TypeScript", "Python AI", 
+      "Docker", "Node.js", "Azure AI", "Copilot Studio", 
+      "MCP Protocol", "Data Structures", "PostgreSQL", "Algorithms"
+    ];
+
+    const wheel = document.getElementById('skills-wheel');
+    const wheelContainer = document.getElementById('wheel-container');
+    const totalItems = skillsList.length;
+    const theta = 360 / totalItems;
+    
+    // Dynamic radius calculation based on screen size
+    const isMobile = window.innerWidth < 768;
+    const itemWidth = isMobile ? 200 : 280;
+    // Calculate exact radius to fit items perfectly in a circle
+    const radius = Math.round((itemWidth / 2) / Math.tan(Math.PI / totalItems)) + 50;
+
+    skillsList.forEach((skill, index) => {
+      const item = document.createElement('div');
+      item.className = 'wheel-item text-white';
+      item.innerText = skill;
+      const angle = theta * index;
+      // Push items out from the true center pivot
+      item.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+      wheel.appendChild(item);
+    });
+
+    let currentRotation = 0; let isDragging = false; let startX = 0;
+    
+    wheelContainer.addEventListener('wheel', (e) => { 
+      e.preventDefault(); 
+      currentRotation += e.deltaY * 0.15; 
+      wheel.style.transform = `rotateY(${currentRotation}deg)`; 
+    });
+    
+    wheelContainer.addEventListener('mousedown', (e) => { 
+      isDragging = true; startX = e.pageX; wheel.style.transition = 'none'; 
+    });
+    
+    window.addEventListener('mouseup', () => { 
+      if(isDragging) { 
+        isDragging = false; 
+        wheel.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+      } 
+    });
+    
+    window.addEventListener('mousemove', (e) => { 
+      if (!isDragging) return; 
+      const walk = (e.pageX - startX) * 0.5; 
+      currentRotation += walk; 
+      wheel.style.transform = `rotateY(${currentRotation}deg)`; 
+      startX = e.pageX; 
+    });
+
+    // Touch Support
+    wheelContainer.addEventListener('touchstart', (e) => { 
+      isDragging = true; startX = e.touches[0].pageX; wheel.style.transition = 'none'; 
+    }, {passive: true});
+    window.addEventListener('touchend', () => { 
+      if(isDragging) { isDragging = false; wheel.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; } 
+    });
+    window.addEventListener('touchmove', (e) => { 
+      if (!isDragging) return; 
+      const walk = (e.touches[0].pageX - startX) * 0.5; 
+      currentRotation += walk; 
+      wheel.style.transform = `rotateY(${currentRotation}deg)`; 
+      startX = e.touches[0].pageX; 
+    }, {passive: true});
+
+    /* ==========================================================================
+       6. SCROLL REVEAL & CONTACT FORM
+       ========================================================================== */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { 
+        if(entry.isIntersecting) { 
+          entry.target.classList.add('active'); 
+          observer.unobserve(entry.target); 
+        } 
+      });
+    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+    
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('user-name').value;
+      const email = document.getElementById('user-email').value;
+      const message = document.getElementById('user-message').value;
+      const targetEmail = "koushikmahadev3@gmail.com";
+      const subject = encodeURIComponent(`System Inquiry: ${name}`);
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nData Transmission:\n${message}`);
+      window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+    }
   </script>
 </body>
 </html>
