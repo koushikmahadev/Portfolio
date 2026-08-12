@@ -193,11 +193,13 @@
       border-radius: 1.4rem; height: 100%; border: 1px solid rgba(255,255,255,0.05);
     }
 
-    /* Pokémon 3D Hover Physics */
+    /* Pokémon 3D Hover & Continuous Glow Physics */
     .poke-sprite { image-rendering: pixelated; animation: floatHover 4s ease-in-out infinite; }
     .poke-sprite.charizard { filter: drop-shadow(0 0 25px rgba(255, 85, 0, 0.8)); }
     .poke-sprite.dragonite { animation-delay: 0.5s; filter: drop-shadow(0 0 25px rgba(255, 165, 0, 0.8)); }
     .poke-sprite.raikou { animation-delay: 1s; filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); }
+    .poke-sprite.blastoise { animation-delay: 1.5s; filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.85)); }
+    .poke-sprite.venusaur { animation-delay: 2s; filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.85)); }
     @keyframes floatHover { 50% { transform: translateY(-20px) scale(1.05); } }
 
     /* 3D Magnetic Cards with Multi-Color Glare */
@@ -215,7 +217,7 @@
     .card-content { transform: translateZ(50px); position: relative; z-index: 10; }
 
     /* ==========================================================================
-       4. FIXED: 3D SKILLS WHEEL
+       4. 3D SKILLS WHEEL WITH TECH LOGOS
        ========================================================================== */
     .wheel-viewport { 
       perspective: 1000px; 
@@ -224,13 +226,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden; /* Prevent items from bleeding outside */
+      overflow: hidden;
     }
     .wheel-viewport:active { cursor: grabbing; }
     
     .skills-wheel { 
       position: relative;
-      /* Act as a 0x0 pivot point dead center */
       width: 0px; 
       height: 0px; 
       transform-style: preserve-3d; 
@@ -239,21 +240,31 @@
     
     .wheel-item {
       position: absolute; 
-      /* Fixed item dimensions centered directly on the 0x0 pivot */
-      width: 200px; height: 60px;
-      top: -30px; left: -100px; 
-      display: flex; justify-content: center; align-items: center;
-      background: rgba(10, 10, 15, 0.7); backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      width: 220px; height: 75px;
+      top: -37.5px; left: -110px; 
+      display: flex; gap: 12px; justify-content: center; align-items: center;
+      background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 35px rgba(0,0,0,0.6);
       transition: all 0.3s ease; font-family: var(--font-display); font-weight: 700; letter-spacing: 1px;
+      padding: 0 16px;
     }
     @media (min-width: 768px) {
-      .wheel-item { width: 280px; height: 80px; top: -40px; left: -140px; }
+      .wheel-item { width: 300px; height: 90px; top: -45px; left: -150px; gap: 16px; padding: 0 20px; }
+    }
+    .wheel-item img {
+      width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+      transition: transform 0.3s ease;
+    }
+    @media (min-width: 768px) {
+      .wheel-item img { width: 40px; height: 40px; }
     }
     .wheel-item:hover {
       border-color: #06b6d4; color: #fff; text-shadow: 0 0 10px #06b6d4;
-      background: rgba(6,182,212,0.1); box-shadow: 0 0 40px rgba(6,182,212,0.3);
+      background: rgba(6,182,212,0.15); box-shadow: 0 0 40px rgba(6,182,212,0.3);
+    }
+    .wheel-item:hover img {
+      transform: scale(1.15) rotate(5deg);
     }
 
     /* Scroll Reveal */
@@ -329,12 +340,8 @@
       
       <!-- NAV -->
       <nav class="flex justify-between items-center py-8 border-b border-white/10 font-mono text-sm relative z-20">
-        <div class="font-bold tracking-tight text-white magnetic-btn cursor-pointer text-lg">
-          <span class="text-gold">&lt;</span>KOUSHIK_M <span class="text-gold">/&gt;</span>
-        </div>
-        <div class="flex items-center gap-3 text-gray-400 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
-          <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4] animate-pulse"></div>
-          <span class="tracking-widest text-[10px] uppercase font-bold text-cyan-100 hidden sm:block">Neural Link Active</span>
+        <div class="font-bold tracking-tight text-white magnetic-btn cursor-pointer text-2xl md:text-3xl font-display flex items-center gap-1 hover:scale-105 transition-transform duration-300">
+          <span class="text-gold font-mono">&lt;</span>KOUSHIK_M <span class="text-gold font-mono">/&gt;</span>
         </div>
       </nav>
 
@@ -359,7 +366,7 @@
           First-year student at UVCE Bangalore. Shipping production-grade AI platforms, isolated dev containers, and clean logical interfaces.
         </p>
 
-        <!-- New Links Added Here -->
+        <!-- Links -->
         <div class="flex flex-wrap gap-5 hero-elements">
           <a href="https://drive.google.com/file/d/1A4xa4pLEozo_PnLWt5gqaBbJkpTrcWOi/view?usp=sharing" target="_blank" class="magnetic-btn px-8 py-4 font-mono text-sm font-bold tracking-widest text-black bg-gradient-to-r from-gold to-yellow-300 rounded-xl hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] transition-all duration-300 hover:scale-105 flex items-center gap-2 cursor-none">
             <i data-lucide="file-text" class="w-4 h-4"></i> ACCESS RESUME
@@ -389,22 +396,26 @@
               </div>
             </div>
           </div>
+          
+          <!-- UVCE College Photo Card -->
           <div class="bento-card interactive-card">
-            <div class="bento-inner p-10 flex flex-col justify-center items-center text-center card-3d-inner">
+            <div class="bento-inner p-6 flex flex-col justify-center items-center text-center card-3d-inner overflow-hidden">
               <div class="card-glare"></div>
-              <div class="card-content">
-                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-gold to-purple flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(234,179,8,0.4)]">
-                  <span class="font-mono font-bold text-2xl text-black">UVCE</span>
+              <div class="card-content w-full flex flex-col items-center">
+                <div class="relative w-full h-36 mb-4 rounded-xl overflow-hidden border border-white/10 shadow-[0_0_25px_rgba(234,179,8,0.25)]">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/UVCE_Main_Building.jpg/800px-UVCE_Main_Building.jpg" alt="UVCE Main Building" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                  <span class="absolute bottom-2 left-3 font-mono text-[10px] text-gold font-bold tracking-widest uppercase bg-black/70 px-2 py-0.5 rounded border border-gold/30">UVCE Campus</span>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2">Location Data</h3>
-                <p class="text-gray-400 font-mono text-sm">Bengaluru, Karnataka<br>India</p>
+                <h3 class="text-lg font-bold text-white mb-1">University Visvesvaraya College of Engineering</h3>
+                <p class="text-gray-400 font-mono text-xs">Bengaluru, Karnataka, India</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 02: ARSENAL (PERFECTLY ALIGNED 3D WHEEL) -->
+      <!-- 02: ARSENAL (3D WHEEL WITH LOGOS) -->
       <section class="py-24 border-t border-white/10 reveal relative z-10">
         <div class="flex items-center gap-4 mb-12">
           <div class="font-mono text-cyan-400 text-lg font-bold">02 //</div>
@@ -417,9 +428,8 @@
             SCROLL OR DRAG TO REVOLVE
           </div>
           
-          <!-- The Wheel acts as a 0x0 pivot point exactly in the center -->
           <div class="skills-wheel" id="skills-wheel">
-            <!-- JS Populates 3D Carousel Items -->
+            <!-- JS Populates 3D Carousel Items with Tech Logos -->
           </div>
         </div>
       </section>
@@ -467,7 +477,7 @@
             </div>
           </div>
 
-          <!-- Card 2: Focus Flow -->
+          <!-- Card 2: ARISE Gamified Fitness Protocol Engine -->
           <div class="bento-card interactive-card min-h-[440px]">
             <div class="bento-inner p-8 md:p-10 flex flex-col justify-between card-3d-inner">
               <div class="card-glare"></div>
@@ -475,30 +485,32 @@
                 <div>
                   <div class="flex justify-between items-start mb-6">
                     <div class="w-12 h-12 rounded-xl bg-purple/20 flex items-center justify-center border border-purple/30 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                      <i data-lucide="terminal-square" class="w-6 h-6"></i>
+                      <i data-lucide="swords" class="w-6 h-6"></i>
                     </div>
-                    <span class="font-mono text-xs text-gray-500 uppercase tracking-widest">Dev Tools</span>
+                    <span class="font-mono text-xs text-gray-500 uppercase tracking-widest">Full-Stack / AI Engine</span>
                   </div>
-                  <h3 class="text-3xl font-display font-bold mb-4 text-white">FocusFlow Architecture</h3>
+                  <h3 class="text-3xl font-display font-bold mb-4 text-white">ARISE — Gamified Fitness Protocol</h3>
                   <p class="text-gray-400 text-[17px] mb-6 leading-relaxed">
-                    Developer environment containment tool maximizing processing deep work loops via explicit operational orchestration parameters inside isolated Docker states.
+                    Enterprise-grade, Solo Leveling-inspired habit formation & workout tracking RPG engine featuring real-time AI exercise rep counting via TensorFlow.js pose detection, WebGL shaders, server-side anti-cheat mathematical validation, and Supabase RLS.
                   </p>
                   
                   <!-- Project Links -->
                   <div class="flex gap-4 mb-8">
-                    <a href="https://focus-flow-seven-rose.vercel.app/" target="_blank" class="flex items-center gap-2 font-mono text-xs font-bold text-purple-400 hover:text-white transition-colors cursor-none">
+                    <a href="https://arise-et4.pages.dev/" target="_blank" class="flex items-center gap-2 font-mono text-xs font-bold text-purple-400 hover:text-white transition-colors cursor-none">
                       <i data-lucide="external-link" class="w-4 h-4"></i> LIVE DEMO
                     </a>
-                    <a href="https://github.com/koushikmahadev/Focus-Flow" target="_blank" class="flex items-center gap-2 font-mono text-xs font-bold text-white hover:text-purple-400 transition-colors cursor-none">
+                    <a href="https://github.com/koushikmahadev/ARISE" target="_blank" class="flex items-center gap-2 font-mono text-xs font-bold text-white hover:text-purple-400 transition-colors cursor-none">
                       <i data-lucide="github" class="w-4 h-4"></i> SOURCE CODE
                     </a>
                   </div>
                 </div>
 
                 <div class="flex flex-wrap gap-3 font-mono text-xs text-purple-300 mt-auto">
-                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">TypeScript</span>
-                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">Docker</span>
-                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">Node.js</span>
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">React 19</span>
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">Spring Boot 3</span>
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">TensorFlow.js AI</span>
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">Supabase</span>
+                  <span class="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10">WebGL Shaders</span>
                 </div>
               </div>
             </div>
@@ -540,8 +552,8 @@
       <!-- FOOTER -->
       <footer class="py-16 text-center reveal border-t border-white/5 relative z-10">
         <div class="flex justify-center gap-10 mb-12">
-          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/9.gif" alt="Blastoise" class="h-20 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:-translate-y-3 transition-all duration-500 cursor-pointer magnetic-btn filter drop-shadow-[0_0_20px_rgba(6,182,212,0.8)]">
-          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/3.gif" alt="Venusaur" class="h-20 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:-translate-y-3 transition-all duration-500 cursor-pointer magnetic-btn filter drop-shadow-[0_0_20px_rgba(168,85,247,0.8)]">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/9.gif" alt="Blastoise" class="poke-sprite blastoise h-20 opacity-100 hover:-translate-y-3 transition-all duration-500 cursor-pointer magnetic-btn">
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/3.gif" alt="Venusaur" class="poke-sprite venusaur h-20 opacity-100 hover:-translate-y-3 transition-all duration-500 cursor-pointer magnetic-btn">
         </div>
         <div class="font-mono text-sm text-gray-500 tracking-[0.2em] uppercase">
           Architecture & Engineering by <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-cyan-400 font-bold">Koushik M</span>
@@ -737,12 +749,21 @@
     });
 
     /* ==========================================================================
-       5. ALIGNED 3D SKILLS SCROLL WHEEL (Fixed Geometry)
+       5. ALIGNED 3D SKILLS SCROLL WHEEL WITH LOGOS
        ========================================================================== */
     const skillsList = [
-      "C / C++", "Java Backend", "TypeScript", "Python AI", 
-      "Docker", "Node.js", "Azure AI", "Copilot Studio", 
-      "MCP Protocol", "Data Structures", "PostgreSQL", "Algorithms"
+      { name: "C / C++", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" },
+      { name: "Java Backend", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" },
+      { name: "TypeScript", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
+      { name: "Python AI", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+      { name: "Docker", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
+      { name: "Node.js", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+      { name: "Azure AI", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" },
+      { name: "Copilot Studio", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" },
+      { name: "React 19", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
+      { name: "Spring Boot", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" },
+      { name: "PostgreSQL", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" },
+      { name: "TensorFlow AI", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" }
     ];
 
     const wheel = document.getElementById('skills-wheel');
@@ -752,16 +773,17 @@
     
     // Dynamic radius calculation based on screen size
     const isMobile = window.innerWidth < 768;
-    const itemWidth = isMobile ? 200 : 280;
-    // Calculate exact radius to fit items perfectly in a circle
-    const radius = Math.round((itemWidth / 2) / Math.tan(Math.PI / totalItems)) + 50;
+    const itemWidth = isMobile ? 220 : 300;
+    const radius = Math.round((itemWidth / 2) / Math.tan(Math.PI / totalItems)) + 60;
 
     skillsList.forEach((skill, index) => {
       const item = document.createElement('div');
       item.className = 'wheel-item text-white';
-      item.innerText = skill;
+      item.innerHTML = `
+        <img src="${skill.logo}" alt="${skill.name}" loading="lazy">
+        <span>${skill.name}</span>
+      `;
       const angle = theta * index;
-      // Push items out from the true center pivot
       item.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
       wheel.appendChild(item);
     });
